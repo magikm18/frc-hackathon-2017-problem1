@@ -1,2 +1,4 @@
 .idea/
-out/
+cmake-*/
+obj/
+bin/
