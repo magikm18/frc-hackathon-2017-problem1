@@ -7,7 +7,7 @@ obj/%.o: src/%.s
 	as -o $@ $< --gstabs+
 
 bin/problem1: $(OBJ_FILES)
-	gcc $(OBJ_FILES) -o $@ -static
+	gcc $(OBJ_FILES) -o $@ -static -O3 -march=native
 	chmod +x $@
 
 all: bin/problem1

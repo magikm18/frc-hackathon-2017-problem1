@@ -12,7 +12,7 @@ main:
     mov %rsp, %rbp
 
     /* check number of arguments */
-    cmp $2, %rdi
+    cmp $3, %rdi
     jge main.valid1
     lea main.invalid1(%rip), %rdi
     call puts
@@ -23,6 +23,7 @@ main.valid1:
     /* open source file */
     mov $2, %rax
     mov 8(%rsi), %rdi
+    push %rsi
     mov $2, %rsi
     syscall
     test %rax, %rax
@@ -62,7 +63,14 @@ main.valid2:
     call algorithm
 
     /* print result */
-    mov $1, %rbp
+    pop %rsi
+    push %r11
+    mov 16(%rsi), %rdi
+    mov $2, %rax
+    mov $2, %rsi
+    syscall
+    mov %rax, %rbp
+    pop %r11
     call result
 
     /* return zero */
@@ -79,6 +87,6 @@ main.end:
     /* constants */
     .section .rodata
 main.invalid1:
-    .string "Expected 1 argument!"
+    .string "Expected 12 arguments!"
 main.invalid2:
     .string "Unable to open input file!"
