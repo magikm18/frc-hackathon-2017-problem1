@@ -39,36 +39,51 @@ addmaybe.skip3:
 
     /* add another node if this is a level transfer tile */
     test %bl, %bl
-    je addmaybe.skip6
-    mov %rbp, 16(%rbp)
-    lea 16(%rbp), %rbp
-    movzb %bl, %rdi
-    mov %rdi, 12(%rbp)
-
-    /* calculate new offset */
+    je addmaybe.skip8
+    push %r10
     push %rdx
     push %rax
-    mov 32(%rsp), %rdi
+    mov 32(%rsp), %r10
+addmaybe.loop1:
+    mov %rbp, 16(%rbp)
+    lea 16(%rbp), %rbp
+    movzb %bl, %eax
+    mov %eax, 12(%rbp)
+
+    /* calculate new offset */
     test $0x1, %bl
     je addmaybe.skip4
-    inc %rdi
+    inc %r10
     jmp addmaybe.skip5
 addmaybe.skip4:
-    dec %rdi
+    dec %r10
 addmaybe.skip5:
-    push %rdi
+    push %r10
     call encode
     mov %eax, 8(%rbp)
-    mov 40(%rsp), %di
+    mov 48(%rsp), %di
     mov %di, (%r13,%rsi,2)
     lea 8(%rsp), %rsp
+    shl $8, %bx
+    mov (%r15,%rax), %bl
+    xchg %bl, %bh
+    test $0x1, %bl
+    je addmaybe.skip6
+    cmp $0x5A, %bh
+    je addmaybe.loop1
+    jmp addmaybe.skip7
+addmaybe.skip6:
+    cmp $0x7A, %bh
+    je addmaybe.loop1
+addmaybe.skip7:
     pop %rax
     pop %rdx
+    pop %r10
     call pushlead
     jmp addmaybe.ret
 
     /* push lead before returning */
-addmaybe.skip6:
+addmaybe.skip8:
     call pushlead
 
     /* return */
