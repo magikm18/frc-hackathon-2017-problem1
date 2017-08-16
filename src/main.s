@@ -90,7 +90,7 @@ main.valid3:
     call result
 
     /* return zero */
-    mov $0, %rax
+    xor %rax, %rax
 
 main.ret:
     mov %rbp, %rsp

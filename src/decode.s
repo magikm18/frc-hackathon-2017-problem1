@@ -15,6 +15,6 @@ decode:
     mov %rax, (%rsp)
     mov %rdx, %rax
     lea 1(%rcx), %rsi
-    mov $0, %rdx
+    xor %rdx, %rdx
     div %rsi
     jmp %rdi

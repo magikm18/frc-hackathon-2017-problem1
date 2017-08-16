@@ -12,7 +12,7 @@ info:
     mov %rcx, %rsi
     mov %r8, %rdx
     mov %r9, %rcx
-    mov $0, %eax
+    xor %eax, %eax
     call printf
 
     /* restore registers */

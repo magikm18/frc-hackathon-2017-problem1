@@ -10,7 +10,7 @@ readall:
     mov %r12, %rdx
     mov %r15, %rsi
 readall.loop1:
-    mov $0, %rax
+    xor %rax, %rax
     syscall
     cmp $-4095, %rax
     jb readall.valid1
@@ -24,7 +24,7 @@ readall.valid1:
     add %rax, %rsi
     sub %rax, %rdx
     jg readall.loop1
-    mov $0, %rax
+    xor %rax, %rax
     ret
 
     .section .rodata

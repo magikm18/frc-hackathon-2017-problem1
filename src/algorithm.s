@@ -43,7 +43,7 @@ algorithm:
 
     /* initialize data buffer */
     push (%rsp)
-    mov $0, %rax
+    xor %rax, %rax
     mov %r12, %rdx
     shr $3, %rdx
 algorithm.loop1:
@@ -53,7 +53,7 @@ algorithm.loop1:
     jle algorithm.loop1
 
     /* find start position */
-    mov $0, %rax
+    xor %rax, %rax
 algorithm.loop2:
     cmpb $0x53, (%r15,%rax)
     je algorithm.break2
@@ -76,7 +76,7 @@ algorithm.loop3:
     incq (%rsp)
 
     /* loop through leads */
-    mov $0, %r10
+    xor %r10, %r10
 algorithm.loop4:
     mov (%r14,%r10,8), %r11
     inc %r10

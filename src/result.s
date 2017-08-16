@@ -4,7 +4,7 @@
 result:
     /* accumulate steps on the stack */
     push $7
-    mov $0, %rdx
+    xor %rdx, %rdx
 result.loop1:
     mov 12(%r11), %eax
     push %rax
@@ -44,7 +44,7 @@ result.loop2:
     mov %rbp, %rdi
     syscall
     mov $60, %rax
-    mov $0, %rdi
+    xor %rdi, %rdi
     syscall
 
     .section .rodata

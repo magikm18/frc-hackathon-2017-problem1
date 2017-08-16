@@ -3,10 +3,9 @@
     .type metadata, @function
 metadata:
     /* count columns */
-    mov $0, %rax
+    xor %rax, %rax
 metadata.loop1:
-    mov (%r15,%rax), %dl
-    cmp $0x0A, %dl
+    cmpb $0x0A, (%r15,%rax)
     je metadata.break1
     inc %rax
     jmp metadata.loop1
@@ -17,8 +16,7 @@ metadata.break1:
     mov %rax, %rcx
     mov $1, %r8
 metadata.loop2:
-    mov (%r15,%rax), %dl
-    cmp $0x0A, %dl
+    cmpb $0x0A, (%r15,%rax)
     je metadata.break2
     cmp %r12, %rax
     jl metadata.continue2
@@ -33,7 +31,7 @@ metadata.break2:
 
     /* count levels */
     inc %rax
-    mov $0, %rdx
+    xor %rdx, %rdx
     mov %rax, %rsi
     mov %r12, %rax
     div %rsi
