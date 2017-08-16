@@ -4,7 +4,7 @@
 addmaybe:
     /* check if already visited */
     bts %rsi, (%r13)
-    jc addmaybe.ret
+    jb addmaybe.ret
 
     /* load target character and analyze */
     mov (%r15,%rsi), %bl

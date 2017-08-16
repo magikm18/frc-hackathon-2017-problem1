@@ -13,7 +13,7 @@ readall.loop1:
     mov $0, %rax
     syscall
     cmp $-4095, %rax
-    jnae readall.valid1
+    jb readall.valid1
     push %rax
     lea readall.invalid1(%rip), %rdi
     call puts
