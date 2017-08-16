@@ -7,6 +7,11 @@ Run `make` to compile (uses GCC and GNU AS)
 
 Run `bin/problem1` with input file and output file as command-line args to run.
 
+## Input format
+
+- Maze levels must be separated by a single blank line (i.e. no additional whitespace)
+- File must have UNIX-style line termination (i.e. LF); CRLF and CR formats are not supported
+
 ## Output
 
 - `S`: Starting
