@@ -3,104 +3,104 @@
     .type main, @function
 main:
     /* function prologue */
-    push %rbx
-    push %r12
-    push %r13
-    push %r14
-    push %r15
-    push %rbp
-    mov %rsp, %rbp
+    pushq %rbx
+    pushq %r12
+    pushq %r13
+    pushq %r14
+    pushq %r15
+    pushq %rbp
+    movq %rsp, %rbp
 
     /* check number of arguments */
-    cmp $3, %rdi
+    cmpq $3, %rdi
     jge main.valid1
-    lea main.invalid1(%rip), %rdi
-    call puts
-    mov $1, %rax
+    leaq main.invalid1(%rip), %rdi
+    callq puts
+    movq $1, %rax
     jmp main.ret
 main.valid1:
 
     /* open input file */
-    mov $2, %rax
-    mov 8(%rsi), %rdi
-    push %rsi
-    mov $2, %rsi
+    movq $2, %rax
+    movq 8(%rsi), %rdi
+    pushq %rsi
+    movq $2, %rsi
     syscall
-    test %rax, %rax
+    testq %rax, %rax
     jne main.valid2
-    mov %rax, %r11
-    lea main.invalid2(%rip), %rdi
-    call puts
-    mov %r11, %rax
+    movq %rax, %r11
+    leaq main.invalid2(%rip), %rdi
+    callq puts
+    movq %r11, %rax
     jmp main.ret
 main.valid2:
-    mov %rax, %rbx
+    movq %rax, %rbx
 
     /* open output file */
-    pop %rsi
-    mov $2, %rax
-    mov 16(%rsi), %rdi
-    mov $2, %rsi
+    popq %rsi
+    movq $2, %rax
+    movq 16(%rsi), %rdi
+    movq $2, %rsi
     syscall
-    test %rax, %rax
+    testq %rax, %rax
     jne main.valid3
-    mov %rax, %r11
-    lea main.invalid3(%rip), %rdi
-    call puts
-    mov %r11, %rax
+    movq %rax, %r11
+    leaq main.invalid3(%rip), %rdi
+    callq puts
+    movq %r11, %rax
     jmp main.ret
 main.valid3:
-    push %rax
+    pushq %rax
 
     /* get length */
-    mov %rbx, %rdi
-    mov $5, %rax
-    lea -144(%rsp), %rsi
+    movq %rbx, %rdi
+    movq $5, %rax
+    leaq -144(%rsp), %rsi
     syscall
-    mov -96(%rsp), %r12
+    movq -96(%rsp), %r12
 
     /* read file */
-    call readall
-    test %rax, %rax
+    callq readall
+    testq %rax, %rax
     jne main.ret
 
     /* close file */
-    mov $3, %rax
-    mov %rbx, %rdi
+    movq $3, %rax
+    movq %rbx, %rdi
     syscall
 
     /* get metadata */
-    call metadata
+    callq metadata
 
     /* print info */
-    call info
+    callq info
 
     /* run algorithm */
-    call algorithm
+    callq algorithm
 
     /* print result */
-    pop %rsi
-    push %r11
-    mov 16(%rsi), %rdi
-    mov $2, %rax
-    mov $2, %rsi
+    popq %rsi
+    pushq %r11
+    movq 16(%rsi), %rdi
+    movq $2, %rax
+    movq $2, %rsi
     syscall
-    mov %rax, %rbp
-    pop %r11
-    call result
+    movq %rax, %rbp
+    popq %r11
+    callq result
 
     /* return zero */
-    mov $0, %rax
+    movq $0, %rax
 
 main.ret:
-    mov %rbp, %rsp
-    pop %rbp
-    pop %r15
-    pop %r14
-    pop %r13
-    pop %r12
-    pop %rbx
-    ret
+    movq %rbp, %rsp
+    popq %rbp
+    popq %r15
+    popq %r14
+    popq %r13
+    popq %r12
+    popq %rbx
+    retq
 
 main.end:
     .size main, .-main
