@@ -9,7 +9,9 @@ algorithm:
     push %rcx
 
     /* allocate data buffer */
-    lea (,%r12,2), %rdi
+    mov %r12, %rdi
+    shr $3, %rdi
+    inc %rdi
     call malloc
     mov %rax, %r13
 
@@ -42,10 +44,12 @@ algorithm:
     /* initialize data buffer */
     push (%rsp)
     mov $0, %rax
+    mov %r12, %rdx
+    shr $3, %rdx
 algorithm.loop1:
-    movw $-1, (%r13,%rax,2)
+    movb $0, (%r13,%rax)
     inc %rax
-    cmp %r12, %rax
+    cmp %rdx, %rax
     jle algorithm.loop1
 
     /* find start position */
@@ -58,7 +62,7 @@ algorithm.loop2:
 algorithm.break2:
 
     /* create first node and initialize lead vector */
-    movw $0, (%r13,%rax,2)
+    bts %rax, (%r13)
     movq $0, (%rbp)
     mov %eax, 8(%rbp)
     movl $6, 12(%rbp)

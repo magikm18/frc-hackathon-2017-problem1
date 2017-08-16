@@ -3,8 +3,8 @@
     .type addmaybe, @function
 addmaybe:
     /* check if already visited */
-    cmpw $-1, (%r13,%rsi,2)
-    jne addmaybe.ret
+    bts %rsi, (%r13)
+    jc addmaybe.ret
 
     /* load target character and analyze */
     mov (%r15,%rsi), %bl
@@ -24,12 +24,8 @@ addmaybe:
     /* found the exit, set a flag */
     or $0x80, %bl
 
-    /* normal target; update data buffer */
+    /* normal target; add new node */
 addmaybe.skip1:
-    mov 24(%rsp), %di
-    mov %di, (%r13,%rsi,2)
-
-    /* add new node */
     mov %r11, (%rbp)
     mov %esi, 8(%rbp)
     movzb %bl, %edi
