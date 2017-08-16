@@ -21,19 +21,17 @@ result.loop1:
 
     /* diplay steps in order */
 result.loop2:
-    pop %rax
-    cmp $7, %rax
-    je result.break2
+    pop %r10
     lea result.chars(%rip), %rdx
-    movzb (%rdx,%rax), %rsi
+    movzb (%rdx,%r10), %rsi
     mov %rsi, -8(%rsp)
     lea -8(%rsp), %rsi
     mov %rbp, %rdi
     mov $1, %rdx
     mov $1, %rax
     syscall
-    jmp result.loop2
-result.break2:
+    cmp $7, %r10
+    jne result.loop2
 
     /* print newline, close file, and exit */
     mov $1, %rax
@@ -51,4 +49,4 @@ result.break2:
 
     .section .rodata
 result.chars:
-    .ascii "<>^vzZS"
+    .ascii "<>^vzZSX"

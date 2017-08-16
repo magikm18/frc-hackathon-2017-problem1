@@ -40,6 +40,7 @@ addmaybe.skip1:
     jns addmaybe.skip2
 
     /* this is the exit; remove exit flag from node and print results */
+    mov %rbp, %r11
     and $0x7F, 12(%rbp)
     mov 56(%rsp), %rbp
     jmp result
