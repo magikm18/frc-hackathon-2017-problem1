@@ -13,6 +13,12 @@ result.loop1:
     test %r11, %r11
     jne result.loop1
 
+    /* truncate file */
+    mov $77, %rax
+    mov %rbp, %rdi
+    mov %rdx, %rsi
+    syscall
+
     /* diplay steps in order */
 result.loop2:
     pop %rax
@@ -29,12 +35,15 @@ result.loop2:
     jmp result.loop2
 result.break2:
 
-    /* print newline and exit */
+    /* print newline, close file, and exit */
     mov $1, %rax
     mov %rbp, %rdi
     mov $1, %rdx
     movq $0x0A, -8(%rsp)
     lea -8(%rsp), %rsi
+    syscall
+    mov $3, %rax
+    mov %rbp, %rdi
     syscall
     ret
 
