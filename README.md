@@ -15,6 +15,7 @@ Run `bin/problem1` with input file and output file as command-line args to run.
 ## Output
 
 - `S`: Starting
+- `X`: Reached Target
 - `<`: Left
 - `>`: Right
 - `^`: Up
