@@ -12,11 +12,11 @@ addmaybe:
     mov 8(%rsp), %bl
     cmp $0x23, %bh
     je addmaybe.ret
+    cmp $0x20, %bh
+    je addmaybe.skip1
     cmp $0x7A, %bh
     je addmaybe.skip1
     cmp $0x5A, %bh
-    je addmaybe.skip1
-    cmp $0x20, %bh
     je addmaybe.skip1
     cmp $0x58, %bh
     jne addmaybe.ret
