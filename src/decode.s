@@ -5,16 +5,16 @@
     /* postcondition: column in rdx; row in rax; level pushed onto stack; rdx, rdi, rsi destroyed */
 decode:
     /* calculate the column, row, and level for a given offset */
-    mov (%rsp), %rdi
-    mov %rax, %rsi
-    lea 1(%rcx), %rax
-    mul %r8
-    inc %rax
-    xchg %rax, %rsi
-    div %rsi
-    mov %rax, (%rsp)
-    mov %rdx, %rax
-    lea 1(%rcx), %rsi
-    xor %rdx, %rdx
-    div %rsi
-    jmp %rdi
+    movq (%rsp), %rdi
+    movq %rax, %rsi
+    leaq 1(%rcx), %rax
+    mulq %r8
+    incq %rax
+    xchgq %rax, %rsi
+    divq %rsi
+    movq %rax, (%rsp)
+    movq %rdx, %rax
+    leaq 1(%rcx), %rsi
+    xorq %rdx, %rdx
+    divq %rsi
+    jmpq *%rdi

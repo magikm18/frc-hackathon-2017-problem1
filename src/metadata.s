@@ -3,47 +3,47 @@
     .type metadata, @function
 metadata:
     /* count columns */
-    xor %rax, %rax
+    xorq %rax, %rax
 metadata.loop1:
     cmpb $0x0A, (%r15,%rax)
     je metadata.break1
-    inc %rax
+    incq %rax
     jmp metadata.loop1
 metadata.break1:
 
     /* count rows */
-    inc %rax
-    mov %rax, %rcx
-    mov $1, %r8
+    incq %rax
+    movq %rax, %rcx
+    movq $1, %r8
 metadata.loop2:
     cmpb $0x0A, (%r15,%rax)
     je metadata.break2
-    cmp %r12, %rax
+    cmpq %r12, %rax
     jl metadata.continue2
-    mov $1, %r9
-    ret
+    movq $1, %r9
+    retq
 metadata.continue2:
-    inc %r8
-    add %rcx, %rax
+    incq %r8
+    addq %rcx, %rax
     jmp metadata.loop2
 metadata.break2:
-    dec %rcx
+    decq %rcx
 
     /* count levels */
-    inc %rax
-    xor %rdx, %rdx
-    mov %rax, %rsi
-    mov %r12, %rax
-    div %rsi
-    mov %rax, %r9
-    sub %rdx, %rsi
-    cmp $2, %rsi
+    incq %rax
+    xorq %rdx, %rdx
+    movq %rax, %rsi
+    movq %r12, %rax
+    divq %rsi
+    movq %rax, %r9
+    subq %rdx, %rsi
+    cmpq $2, %rsi
     jg metadata.skip1
-    cmp $0, %rsi
+    cmpq $0, %rsi
     je metadata.skip1
-    inc %r9
+    incq %r9
 metadata.skip1:
-    ret
+    retq
 
     .section .rodata
 format:

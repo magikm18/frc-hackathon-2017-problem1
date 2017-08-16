@@ -3,29 +3,29 @@
     .type readall, @function
 readall:
     /* read entire file onto heap */
-    mov %r12, %rdi
-    call malloc
-    mov %rax, %r15
-    mov %rbx, %rdi
-    mov %r12, %rdx
-    mov %r15, %rsi
+    movq %r12, %rdi
+    callq malloc
+    movq %rax, %r15
+    movq %rbx, %rdi
+    movq %r12, %rdx
+    movq %r15, %rsi
 readall.loop1:
-    xor %rax, %rax
+    movq $0, %rax
     syscall
-    cmp $-4095, %rax
+    cmpq $-4095, %rax
     jb readall.valid1
-    push %rax
-    lea readall.invalid1(%rip), %rdi
-    call puts
-    pop %rax
-    neg %rax
-    ret
+    pushq %rax
+    leaq readall.invalid1(%rip), %rdi
+    callq puts
+    popq %rax
+    negq %rax
+    retq
 readall.valid1:
-    add %rax, %rsi
-    sub %rax, %rdx
+    addq %rax, %rsi
+    subq %rax, %rdx
     jg readall.loop1
-    xor %rax, %rax
-    ret
+    xorq %rax, %rax
+    retq
 
     .section .rodata
 readall.invalid1:

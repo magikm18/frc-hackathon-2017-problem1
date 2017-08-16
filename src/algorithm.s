@@ -3,200 +3,200 @@
     .type algorithm, @function
 algorithm:
     /* save registers */
-    push %rax
-    push %r9
-    push %r8
-    push %rcx
+    pushq %rax
+    pushq %r9
+    pushq %r8
+    pushq %rcx
 
     /* allocate data buffer */
-    mov %r12, %rdi
-    shr $3, %rdi
-    inc %rdi
-    call malloc
-    mov %rax, %r13
+    movq %r12, %rdi
+    shrq $3, %rdi
+    incq %rdi
+    callq malloc
+    movq %rax, %r13
 
     /* calculate maximum number of leads */
-    mov (%rsp), %rax
+    movq (%rsp), %rax
     mulq 8(%rsp)
     mulq 16(%rsp)
 
     /* allocate lead pointer buffers */
-    lea (,%rax,8), %rdi
-    mov %rdi, %rbx
-    call malloc
+    leaq (,%rax,8), %rdi
+    movq %rdi, %rbx
+    callq malloc
     movq $0, (%rax)
-    mov %rax, 24(%rsp)
-    mov %rbx, %rdi
-    call malloc
-    mov %rax, %r14
+    movq %rax, 24(%rsp)
+    movq %rbx, %rdi
+    callq malloc
+    movq %rax, %r14
 
     /* allocate lead linked list node buffer */
-    lea (,%rbx,8), %rdi
-    lea (,%rdi,8), %rdi
-    call malloc
-    mov %rax, %rbp
+    leaq (,%rbx,8), %rdi
+    leaq (,%rdi,8), %rdi
+    callq malloc
+    movq %rax, %rbp
 
     /* restore registers */
-    pop %rcx
-    pop %r8
-    pop %r9
+    popq %rcx
+    popq %r8
+    popq %r9
 
     /* initialize data buffer */
-    push (%rsp)
-    xor %rax, %rax
-    mov %r12, %rdx
-    shr $3, %rdx
+    pushq (%rsp)
+    xorq %rax, %rax
+    movq %r12, %rdx
+    shrq $3, %rdx
 algorithm.loop1:
     movb $0, (%r13,%rax)
-    inc %rax
-    cmp %rdx, %rax
+    incq %rax
+    cmpq %rdx, %rax
     jle algorithm.loop1
 
     /* find start position */
-    xor %rax, %rax
+    xorq %rax, %rax
 algorithm.loop2:
     cmpb $0x53, (%r15,%rax)
     je algorithm.break2
-    inc %rax
+    incq %rax
     jmp algorithm.loop2
 algorithm.break2:
 
     /* create first node and initialize lead vector */
-    bts %rax, (%r13)
+    btsq %rax, (%r13)
     movq $0, (%rbp)
-    mov %eax, 8(%rbp)
+    movl %eax, 8(%rbp)
     movl $6, 12(%rbp)
-    mov %rbp, (%r14)
+    movq %rbp, (%r14)
     movq $0, 8(%r14)
-    lea 16(%rbp), %rbp
+    leaq 16(%rbp), %rbp
 
     /* main loop */
-    push $0
+    pushq $0
 algorithm.loop3:
     incq (%rsp)
 
     /* loop through leads */
     xor %r10, %r10
 algorithm.loop4:
-    mov (%r14,%r10,8), %r11
-    inc %r10
-    test %r11, %r11
+    movq (%r14,%r10,8), %r11
+    incq %r10
+    testq %r11, %r11
     je algorithm.break4
 
     /* lead is active; get character and decode coordinates */
-    mov 8(%r11), %eax
-    and $-1, %rax
-    call decode
-    mov 8(%r11), %esi
-    and $-1, %rsi
+    movl 8(%r11), %eax
+    andq $-1, %rax
+    callq decode
+    movl 8(%r11), %esi
+    andq $-1, %rsi
 
     /* try to go left */
-    push $0
-    test %rdx, %rdx
+    pushq $0
+    testq %rdx, %rdx
     je algorithm.skip1
-    dec %rsi
-    call addmaybe
-    inc %rsi
+    decq %rsi
+    callq addmaybe
+    incq %rsi
 algorithm.skip1:
 
     /* try to go right */
-    inc %rdx
-    cmp %rcx, %rdx
+    incq %rdx
+    cmpq %rcx, %rdx
     jge algorithm.skip2
     movq $1, (%rsp)
-    inc %rsi
-    call addmaybe
-    dec %rsi
+    incq %rsi
+    callq addmaybe
+    decq %rsi
 algorithm.skip2:
-    dec %rdx
+    decq %rdx
 
     /* try to go up */
-    test %rax, %rax
+    testq %rax, %rax
     je algorithm.skip3
     movq $2, (%rsp)
-    sub %rcx, %rsi
-    dec %rsi
-    call addmaybe
-    lea 1(%rsi,%rcx), %rsi
+    subq %rcx, %rsi
+    decq %rsi
+    callq addmaybe
+    leaq 1(%rsi,%rcx), %rsi
 algorithm.skip3:
 
     /* try to go down */
-    inc %rax
-    cmp %r8, %rax
+    incq %rax
+    cmpq %r8, %rax
     jge algorithm.skip4
     movq $3, (%rsp)
-    lea 1(%rsi,%rcx), %rsi
-    call addmaybe
-    dec %rsi
-    sub %rcx, %rsi
+    leaq 1(%rsi,%rcx), %rsi
+    callq addmaybe
+    decq %rsi
+    subq %rcx, %rsi
 algorithm.skip4:
-    dec %rax
+    decq %rax
 
     /* try to level down */
     cmpb $0x7A, (%r15,%rsi)
     jne algorithm.skip5
     movq $4,(%rsp)
-    push %rdx
-    push %rax
-    mov 24(%rsp), %rax
-    dec %rax
-    push %rax
-    call encode
-    mov %rax, %rsi
-    lea 8(%rsp), %rsp
-    pop %rax
-    pop %rdx
-    call addmaybe
-    push %rdx
-    push %rax
-    push 24(%rsp)
-    call encode
-    mov %rax, %rsi
-    lea 8(%rsp), %rsp
-    pop %rax
-    pop %rdx
+    pushq %rdx
+    pushq %rax
+    movq 24(%rsp), %rax
+    decq %rax
+    pushq %rax
+    callq encode
+    movq %rax, %rsi
+    leaq 8(%rsp), %rsp
+    popq %rax
+    popq %rdx
+    callq addmaybe
+    pushq %rdx
+    pushq %rax
+    pushq 24(%rsp)
+    callq encode
+    movq %rax, %rsi
+    leaq 8(%rsp), %rsp
+    popq %rax
+    popq %rdx
 algorithm.skip5:
 
     /* try to level up */
     cmpb $0x5A, (%r15,%rsi)
     jne algorithm.skip6
     movq $5,(%rsp)
-    push %rdx
-    push %rax
-    mov 24(%rsp), %rax
-    inc %rax
-    push %rax
-    call encode
-    mov %rax, %rsi
-    lea 8(%rsp), %rsp
-    pop %rax
-    pop %rdx
-    call addmaybe
-    push %rdx
-    push %rax
-    push 24(%rsp)
-    call encode
-    mov %rax, %rsi
-    lea 8(%rsp), %rsp
-    pop %rax
-    pop %rdx
+    pushq %rdx
+    pushq %rax
+    movq 24(%rsp), %rax
+    incq %rax
+    pushq %rax
+    callq encode
+    movq %rax, %rsi
+    leaq 8(%rsp), %rsp
+    popq %rax
+    popq %rdx
+    callq addmaybe
+    pushq %rdx
+    pushq %rax
+    pushq 24(%rsp)
+    callq encode
+    movq %rax, %rsi
+    leaq 8(%rsp), %rsp
+    popq %rax
+    popq %rdx
 algorithm.skip6:
 
     /* back to the top */
-    lea 16(%rsp), %rsp
+    leaq 16(%rsp), %rsp
     jmp algorithm.loop4
 
     /* swap lead pointer buffers and restart main loop */
 algorithm.break4:
     movq $0, (%r14)
-    mov %r14, 8(%rsp)
-    xchg 16(%rsp), %r14
+    movq %r14, 8(%rsp)
+    xchgq 16(%rsp), %r14
     jmp algorithm.loop3
 
     /* reset stack pointer and return */
 algorithm.ret:
-    lea 24(%rsp), %rsp
-    ret
+    leaq 24(%rsp), %rsp
+    retq
 
     .section .rodata
 algorithm.format1:
