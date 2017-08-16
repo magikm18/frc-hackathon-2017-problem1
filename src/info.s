@@ -3,23 +3,23 @@
     .type info, @function
 info:
     /* save registers */
-    push %r9
-    push %r8
-    push %rcx
+    pushq %r9
+    pushq %r8
+    pushq %rcx
 
     /* print info */
-    lea info.format1(%rip), %rdi
-    mov %rcx, %rsi
-    mov %r8, %rdx
-    mov %r9, %rcx
-    mov $0, %eax
-    call printf
+    leaq info.format1(%rip), %rdi
+    movq %rcx, %rsi
+    movq %r8, %rdx
+    movq %r9, %rcx
+    movl $0, %eax
+    callq printf
 
     /* restore registers */
-    pop %rcx
-    pop %r8
-    pop %r9
-    ret
+    popq %rcx
+    popq %r8
+    popq %r9
+    retq
 
     .section .rodata
 info.format1:
