@@ -77,14 +77,12 @@ algorithm.loop3:
 algorithm.loop4:
     mov (%r14,%r10,8), %r11
     inc %r10
-    cmp $-1, %r11
-    je algorithm.loop4
     test %r11, %r11
     je algorithm.break4
 
     /* lead is active; get character and decode coordinates */
-    mov $0, %rax
     mov 8(%r11), %eax
+    and $-1, %rax
     call decode
     mov 8(%r11), %esi
     and $-1, %rsi
@@ -132,9 +130,7 @@ algorithm.skip4:
     dec %rax
 
     /* try to level down */
-    mov $0, %rdi
-    mov 8(%r11), %edi
-    cmpb $0x7A, (%r15,%rdi)
+    cmpb $0x7A, (%r15,%rsi)
     jne algorithm.skip5
     movq $4,(%rsp)
     push %rdx
@@ -159,9 +155,7 @@ algorithm.skip4:
 algorithm.skip5:
 
     /* try to level up */
-    mov $0, %rdi
-    mov 8(%r11), %edi
-    cmpb $0x5A, (%r15,%rdi)
+    cmpb $0x5A, (%r15,%rsi)
     jne algorithm.skip6
     movq $5,(%rsp)
     push %rdx
