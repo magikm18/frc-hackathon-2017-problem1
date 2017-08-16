@@ -45,7 +45,9 @@ result.break2:
     mov $3, %rax
     mov %rbp, %rdi
     syscall
-    ret
+    mov $60, %rax
+    mov $0, %rdi
+    syscall
 
     .section .rodata
 result.chars:

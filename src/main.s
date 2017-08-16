@@ -20,7 +20,7 @@ main:
     jmp main.ret
 main.valid1:
 
-    /* open source file */
+    /* open input file */
     mov $2, %rax
     mov 8(%rsi), %rdi
     push %rsi
@@ -34,10 +34,26 @@ main.valid1:
     mov %r11, %rax
     jmp main.ret
 main.valid2:
+    mov %rax, %rbx
+
+    /* open output file */
+    pop %rsi
+    mov $2, %rax
+    mov 16(%rsi), %rdi
+    mov $2, %rsi
+    syscall
+    test %rax, %rax
+    jne main.valid3
+    mov %rax, %r11
+    lea main.invalid3(%rip), %rdi
+    call puts
+    mov %r11, %rax
+    jmp main.ret
+main.valid3:
+    push %rax
 
     /* get length */
-    mov %rax, %rdi
-    mov %rax, %rbx
+    mov %rbx, %rdi
     mov $5, %rax
     lea -144(%rsp), %rsi
     syscall
@@ -77,9 +93,7 @@ main.valid2:
     mov $0, %rax
 
 main.ret:
-    mov %rax, %rdi
-    mov $60, %rax
-    syscall
+    ret
 
 main.end:
     .size main, .-main
@@ -87,6 +101,8 @@ main.end:
     /* constants */
     .section .rodata
 main.invalid1:
-    .string "Expected 12 arguments!"
+    .string "Expected 2 arguments!"
 main.invalid2:
     .string "Unable to open input file!"
+main.invalid3:
+    .string "Unable to open output file!"

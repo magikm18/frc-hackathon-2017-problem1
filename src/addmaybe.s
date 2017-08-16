@@ -9,68 +9,43 @@ addmaybe:
     /* load target character and analyze */
     mov (%r15,%rsi), %bl
     shl $8, %bx
+    mov 8(%rsp), %bl
     cmp $0x23, %bh
     je addmaybe.ret
     cmp $0x7A, %bh
-    jne addmaybe.skip1
-    mov $4, %bl
-    jmp addmaybe.skip3
-addmaybe.skip1:
+    je addmaybe.skip1
     cmp $0x5A, %bh
-    jne addmaybe.skip2
-    mov $5, %bl
-    jmp addmaybe.skip3
-addmaybe.skip2:
+    je addmaybe.skip1
     cmp $0x20, %bh
-    je addmaybe.skip3
+    je addmaybe.skip1
     cmp $0x58, %bh
     jne addmaybe.ret
 
+    /* found the exit, set a flag */
+    or $0x80, %bl
+
     /* normal target; update data buffer */
-addmaybe.skip3:
+addmaybe.skip1:
     mov 24(%rsp), %di
     mov %di, (%r13,%rsi,2)
 
     /* add new node */
     mov %r11, (%rbp)
     mov %esi, 8(%rbp)
-    mov 8(%rsp), %edi
+    movzb %bl, %edi
     mov %edi, 12(%rbp)
 
-    /* add another node if this is a level transfer tile */
+    /* check if exit flag set */
     test %bl, %bl
-    je addmaybe.skip6
-    mov %rbp, 16(%rbp)
-    lea 16(%rbp), %rbp
-    movzb %bl, %rdi
-    mov %rdi, 12(%rbp)
+    jns addmaybe.skip2
 
-    /* calculate new offset */
-    push %rdx
-    push %rax
-    mov 32(%rsp), %rdi
-    test $0x1, %bl
-    je addmaybe.skip4
-    inc %rdi
-    jmp addmaybe.skip5
-addmaybe.skip4:
-    dec %rdi
-addmaybe.skip5:
-    push %rdi
-    call encode
-    mov %eax, 8(%rbp)
-    mov 40(%rsp), %di
-    mov %di, (%r13,%rsi,2)
-    lea 8(%rsp), %rsp
-    pop %rax
-    pop %rdx
+    /* this is the exit; remove exit flag from node and print results */
+    and $0x7F, 12(%rbp)
+    mov 56(%rsp), %rbp
+    jmp result
+addmaybe.skip2:
+
+    /* push lead and return */
     call pushlead
-    jmp addmaybe.ret
-
-    /* push lead before returning */
-addmaybe.skip6:
-    call pushlead
-
-    /* return */
 addmaybe.ret:
     ret

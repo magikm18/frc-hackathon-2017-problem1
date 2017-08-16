@@ -2,7 +2,7 @@
     .globl decode
     .type decode, @function
     /* precondition: offset in rax */
-    /* postcondition: column in rdx; row in rax; level pushed onto stack; rdi, rsi destroyed */
+    /* postcondition: column in rdx; row in rax; level pushed onto stack; rdx, rdi, rsi destroyed */
 decode:
     /* calculate the column, row, and level for a given offset */
     mov (%rsp), %rdi

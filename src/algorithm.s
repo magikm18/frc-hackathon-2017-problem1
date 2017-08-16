@@ -46,7 +46,7 @@ algorithm.loop1:
     movw $-1, (%r13,%rax,2)
     inc %rax
     cmp %r12, %rax
-    jl algorithm.loop1
+    jle algorithm.loop1
 
     /* find start position */
     mov $0, %rax
@@ -59,6 +59,7 @@ algorithm.loop2:
 algorithm.break2:
 
     /* create first node and initialize lead vector */
+    movw $0, (%r13,%rax,2)
     movq $0, (%rbp)
     mov %eax, 8(%rbp)
     movl $6, 12(%rbp)
@@ -81,14 +82,9 @@ algorithm.loop4:
     test %r11, %r11
     je algorithm.break4
 
-    /* lead is active - check if at end */
+    /* lead is active; get character and decode coordinates */
+    mov $0, %rax
     mov 8(%r11), %eax
-    and $-1, %rax
-    mov (%r15,%rax), %bl
-    cmp $0x58, %bl
-    je algorithm.ret
-
-    /* decode coodrinates */
     call decode
     mov 8(%r11), %esi
     and $-1, %rsi
@@ -98,9 +94,7 @@ algorithm.loop4:
     test %rdx, %rdx
     je algorithm.skip1
     dec %rsi
-    dec %rdx
     call addmaybe
-    inc %rdx
     inc %rsi
 algorithm.skip1:
 
@@ -121,9 +115,7 @@ algorithm.skip2:
     movq $2, (%rsp)
     sub %rcx, %rsi
     dec %rsi
-    dec %rax
     call addmaybe
-    inc %rax
     lea 1(%rsi,%rcx), %rsi
 algorithm.skip3:
 
@@ -138,6 +130,60 @@ algorithm.skip3:
     sub %rcx, %rsi
 algorithm.skip4:
     dec %rax
+
+    /* try to level down */
+    mov $0, %rdi
+    mov 8(%r11), %edi
+    cmpb $0x7A, (%r15,%rdi)
+    jne algorithm.skip5
+    movq $4,(%rsp)
+    push %rdx
+    push %rax
+    mov 24(%rsp), %rax
+    dec %rax
+    push %rax
+    call encode
+    mov %rax, %rsi
+    lea 8(%rsp), %rsp
+    pop %rax
+    pop %rdx
+    call addmaybe
+    push %rdx
+    push %rax
+    push 24(%rsp)
+    call encode
+    mov %rax, %rsi
+    lea 8(%rsp), %rsp
+    pop %rax
+    pop %rdx
+algorithm.skip5:
+
+    /* try to level up */
+    mov $0, %rdi
+    mov 8(%r11), %edi
+    cmpb $0x5A, (%r15,%rdi)
+    jne algorithm.skip6
+    movq $5,(%rsp)
+    push %rdx
+    push %rax
+    mov 24(%rsp), %rax
+    inc %rax
+    push %rax
+    call encode
+    mov %rax, %rsi
+    lea 8(%rsp), %rsp
+    pop %rax
+    pop %rdx
+    call addmaybe
+    push %rdx
+    push %rax
+    push 24(%rsp)
+    call encode
+    mov %rax, %rsi
+    lea 8(%rsp), %rsp
+    pop %rax
+    pop %rdx
+algorithm.skip6:
 
     /* back to the top */
     lea 16(%rsp), %rsp
