@@ -93,6 +93,13 @@ main.valid3:
     mov $0, %rax
 
 main.ret:
+    mov %rbp, %rsp
+    pop %rbp
+    pop %r15
+    pop %r14
+    pop %r13
+    pop %r12
+    pop %rbx
     ret
 
 main.end:

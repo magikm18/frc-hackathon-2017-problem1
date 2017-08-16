@@ -51,8 +51,7 @@ algorithm.loop1:
     /* find start position */
     mov $0, %rax
 algorithm.loop2:
-    mov (%r15,%rax), %dl
-    cmp $0x53, %dl
+    cmpb $0x53, (%r15,%rax)
     je algorithm.break2
     inc %rax
     jmp algorithm.loop2
